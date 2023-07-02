@@ -30,7 +30,7 @@ def get_book_data(book_number):
     soup = BeautifulSoup(response.text, 'lxml')
 
     for a in soup.find('div', id='content').find('table').find_all('a'):
-        if a.get('href')[:4] == '/txt':
+        if a.get('href')[:4] == '/txt':  # Проверяет, есть ли ссылка на книгу
             book_url = urljoin(base_url, a.get('href'))
             break
 

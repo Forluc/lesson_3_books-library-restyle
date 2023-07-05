@@ -1,9 +1,8 @@
 import requests
-from bs4 import BeautifulSoup
-import lxml
 import os
 from pathvalidate import sanitize_filename
-from urllib.parse import urljoin
+from all_func import parse_book_page
+import argparse
 
 
 def download_txt(url, filename, folder='books/'):
@@ -19,36 +18,24 @@ def download_txt(url, filename, folder='books/'):
 
 
 def get_book_data(book_number):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-    }
-    base_url = 'https://tululu.org'
-    book_data_url = urljoin(base_url, f'b{book_number}')
-    response = requests.get(book_data_url, headers=headers)
-    response.raise_for_status()
-
-    soup = BeautifulSoup(response.text, 'lxml')
-
-    for a in soup.find('div', id='content').find('table').find_all('a'):
-        if a.get('href')[:4] == '/txt':  # Проверяет, есть ли ссылка на книгу
-            book_url = urljoin(base_url, a.get('href'))
-            break
-
-    title_and_author = soup.find('table', class_='tabs').find('div', id='content').find('h1')
-    separator = title_and_author.text.find('::')
-
-    title = f'{book_number}. {title_and_author.text[:separator].strip()}'
-
-    download_txt(book_url, title)
+    book_data = parse_book_page(book_number)
+    download_txt(book_data['url'], book_data['title'])
+    return book_data['title'], book_data['author']
 
 
 def main():
-    for book_number in range(1, 11):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--start_id', help='Начало скачивания книг по ID', default=1)
+    parser.add_argument('--end_id', help='Конец скачивания книг по ID', default=10)
+    args = parser.parse_args()
+
+    for book_number in range(int(args.start_id), int(args.end_id) + 1):
         try:
-            get_book_data(book_number)
-            print(f'Книга с номером {book_number} скачана')
+            title, author = get_book_data(book_number)
+            print(f'{title}\n{author}')
         except:
             print(f'Книги номер {book_number} не существует')
+        print()
 
 
 if __name__ == '__main__':

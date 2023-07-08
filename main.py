@@ -39,14 +39,14 @@ def main():
             title, author = get_book(book_number)
             print(f'Книга номер {book_number}\n{title}\n{author}')
             counter += 1
-        except (TypeError, requests.exceptions.MissingSchema) as ex:
-            print(f'Книга номер {book_number}\nERROR: {ex}')
+        except (TypeError, requests.exceptions.MissingSchema) as error:
+            print(f'Книга номер {book_number}\nERROR: {error}')
             counter += 1
-        except requests.exceptions.ConnectionError as ex:
-            print(f'Книга номер {book_number}\nERROR: {ex}')
+        except requests.exceptions.ConnectionError as error:
+            print(f'Книга номер {book_number}\nERROR: {error}')
             time.sleep(5)
-        except requests.exceptions.HTTPError as ex:
-            print(f'Книга номер {book_number}\nERROR: {ex}')
+        except requests.exceptions.HTTPError as error:
+            print(f'Книга номер {book_number}\nERROR: {error}')
             counter += 1
         print()
 

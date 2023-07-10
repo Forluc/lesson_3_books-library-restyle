@@ -25,7 +25,8 @@ def get_book(book_number):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description='Парсер для установки границ при скачивании книг с онлайн-библиотеки tululu')
     parser.add_argument('--start_id', help='Начало скачивания книг по ID', default=1, type=int)
     parser.add_argument('--end_id', help='Конец скачивания книг по ID', default=10, type=int)
     args = parser.parse_args()

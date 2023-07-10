@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from all_func import parse_book_page, download_txt, download_image
+from all_func import parse_book_page, download_txt, download_image,get_redirect
 import argparse
 
 
@@ -14,9 +14,8 @@ def get_book(book_number):
     base_url = 'https://tululu.org'
     book_data_url = urljoin(base_url, f'b{book_number}/')
     response = requests.get(book_data_url, headers=headers, allow_redirects=True)
-    response.raise_for_status()
 
-    if not response.history:
+    if get_redirect(response):
         book = parse_book_page(response)
         if book:
             download_txt(book['url'], book['title'])

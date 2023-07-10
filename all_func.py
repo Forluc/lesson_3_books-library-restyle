@@ -59,8 +59,7 @@ def parse_book_page(response):
 
 def download_txt(url, filename, folder='books'):
     response = requests.get(url, allow_redirects=True)
-    response.raise_for_status()
-    if not response.history:
+    if get_redirect(response):
         os.makedirs(folder, exist_ok=True)
         filepath = os.path.join(folder, f'{sanitize_filename(filename)}.txt')
         with open(filepath, 'wb') as file:
@@ -70,9 +69,15 @@ def download_txt(url, filename, folder='books'):
 
 def download_image(url, filename, folder='images'):
     response = requests.get(url, allow_redirects=True)
-    response.raise_for_status()
-    if not response.history:
+    if get_redirect(response):
         os.makedirs(folder, exist_ok=True)
         filepath = os.path.join(folder, filename)
         with open(filepath, 'wb') as file:
             file.write(response.content)
+
+
+def get_redirect(response):
+    response.raise_for_status()
+    if response.history:
+        return False
+    return True

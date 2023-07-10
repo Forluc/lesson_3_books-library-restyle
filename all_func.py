@@ -40,9 +40,7 @@ def parse_book_page(response):
         commentary = author_and_comment[start_comment + len(')'):]
         comments.append(commentary)
 
-    genres = []
-    for genre in soup.find('span', class_='d_book').find_all('a'):
-        genres.append(genre.getText())
+    genres = [genre.getText() for genre in soup.find('span', class_='d_book').find_all('a')]
 
     book = {
         'title': title,

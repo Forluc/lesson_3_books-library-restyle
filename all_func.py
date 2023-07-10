@@ -18,10 +18,10 @@ def parse_book_page(response):
     picture = soup.find('body').find('div', class_='bookimage').find('img').get('src')
     picture_url = urljoin(response.url, picture)
 
-    url_split = urlsplit(picture_url)
-    picture_path = url_split.path
-    slash_find = picture_path[1:].find('/')
-    picture_name = picture_path[slash_find + 2:]
+    picture_link = urlsplit(picture_url)
+    picture_path = picture_link.path
+    picture_name_start = picture_path[1:].find('/')
+    picture_name = picture_path[picture_name_start + 2:]
 
     links = soup.find('div', id='content').find('table').find_all('a')
     for link in links:

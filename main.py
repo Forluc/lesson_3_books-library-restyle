@@ -8,12 +8,9 @@ import argparse
 
 
 def get_book(book_number):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-    }
     base_url = 'https://tululu.org'
     book_url = urljoin(base_url, f'b{book_number}/')
-    response = requests.get(book_url, headers=headers, allow_redirects=True)
+    response = requests.get(book_url, allow_redirects=True)
 
     if get_redirect(response):
         book = parse_book_page(response)

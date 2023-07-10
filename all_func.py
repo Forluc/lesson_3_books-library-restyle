@@ -26,10 +26,10 @@ def parse_book_page(response):
     links = soup.find('div', id='content').find('table').find_all('a')
     for link in links:
         if link.get('href')[:4] == '/txt':
-            url = urljoin(response.url, link.get('href'))
+            book_url = urljoin(response.url, link.get('href'))
             break
         else:
-            url = None
+            book_url = None
 
     text = soup.find('td', class_='ow_px_td').find_all('table', class_='d_book')[1].text
 
@@ -48,7 +48,7 @@ def parse_book_page(response):
         'title': title,
         'author': author,
         'picture_url': picture_url,
-        'url': url,
+        'book_url': book_url,
         'text': text,
         'comments': comments,
         'genres': genres,

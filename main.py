@@ -18,7 +18,7 @@ def get_book(book_number):
     if get_redirect(response):
         book = parse_book_page(response)
         if book:
-            download_txt(book['url'], book['title'])
+            download_txt(book['book_url'], book['title'])
             download_image(book['picture_url'], book['picture_name'])
             return book['title'], book['author']
 

@@ -12,8 +12,8 @@ def get_book(book_number):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
     }
     base_url = 'https://tululu.org'
-    book_data_url = urljoin(base_url, f'b{book_number}/')
-    response = requests.get(book_data_url, headers=headers, allow_redirects=True)
+    book_url = urljoin(base_url, f'b{book_number}/')
+    response = requests.get(book_url, headers=headers, allow_redirects=True)
 
     if get_redirect(response):
         book = parse_book_page(response)

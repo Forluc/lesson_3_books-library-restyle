@@ -57,25 +57,28 @@ def parse_book_page(response):
 
 def download_txt(url, filename, folder='books'):
     response = requests.get(url, allow_redirects=True)
-    if get_redirect(response):
-        os.makedirs(folder, exist_ok=True)
-        filepath = os.path.join(folder, f'{sanitize_filename(filename)}.txt')
-        with open(filepath, 'wb') as file:
-            file.write(response.content)
-        return filepath
+    response.raise_for_status()
+    check_for_redirect(response)
+    os.makedirs(folder, exist_ok=True)
+    filepath = os.path.join(folder, f'{sanitize_filename(filename)}.txt')
+    with open(filepath, 'wb') as file:
+        file.write(response.content)
+    return filepath
 
 
 def download_image(url, filename, folder='images'):
     response = requests.get(url, allow_redirects=True)
-    if get_redirect(response):
-        os.makedirs(folder, exist_ok=True)
-        filepath = os.path.join(folder, filename)
-        with open(filepath, 'wb') as file:
-            file.write(response.content)
+    response.raise_for_status()
+    check_for_redirect(response)
+
+    os.makedirs(folder, exist_ok=True)
+    filepath = os.path.join(folder, filename)
+    with open(filepath, 'wb') as file:
+        file.write(response.content)
 
 
-def get_redirect(response):
+def check_for_redirect(response):
     response.raise_for_status()
     if response.history:
-        return False
-    return True
+        raise requests.exceptions.HTTPError
+

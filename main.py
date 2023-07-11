@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from all_func import parse_book_page, download_txt, download_image,get_redirect
+from all_func import parse_book_page, download_txt, download_image,check_for_redirect
 import argparse
 
 
@@ -11,13 +11,14 @@ def get_book(book_number):
     base_url = 'https://tululu.org'
     book_url = urljoin(base_url, f'b{book_number}/')
     response = requests.get(book_url, allow_redirects=True)
+    response.raise_for_status()
+    check_for_redirect(response)
 
-    if get_redirect(response):
-        book = parse_book_page(response)
-        if book:
-            download_txt(book['book_url'], book['title'])
-            download_image(book['picture_url'], book['picture_name'])
-            return book['title'], book['author']
+    book = parse_book_page(response)
+    if book:
+        download_txt(book['book_url'], book['title'])
+        download_image(book['picture_url'], book['picture_name'])
+        return book['title'], book['author']
 
 
 def main():
@@ -42,8 +43,8 @@ def main():
         except requests.exceptions.ConnectionError as error:
             print(f'Книга номер {book_number}\nERROR: {error}')
             time.sleep(5)
-        except requests.exceptions.HTTPError as error:
-            print(f'Книга номер {book_number}\nERROR: {error}')
+        except requests.exceptions.HTTPError:
+            print(f'Книга номер {book_number}\nERROR: Произошел редирект')
             counter += 1
         print()
 

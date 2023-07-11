@@ -78,7 +78,6 @@ def download_image(url, filename, folder='images'):
 
 
 def check_for_redirect(response):
-    response.raise_for_status()
     if response.history:
         raise requests.exceptions.HTTPError
 

@@ -19,8 +19,9 @@ def get_book_link(url):
 
 
 def main():
-    url = 'https://tululu.org/l55/'
-    print(*get_book_link(url), sep='\n')
+    for number_page in range(1, 11):
+        url = f'https://tululu.org/l55/{number_page}'
+        print(*get_book_link(url), sep='\n')
 
 
 if __name__ == '__main__':

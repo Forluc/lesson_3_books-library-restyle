@@ -59,6 +59,7 @@ def download_txt(url, filename, folder='books'):
     response = requests.get(url, allow_redirects=True)
     response.raise_for_status()
     check_for_redirect(response)
+
     os.makedirs(folder, exist_ok=True)
     filepath = os.path.join(folder, f'{sanitize_filename(filename)}.txt')
     with open(filepath, 'wb') as file:
@@ -75,9 +76,9 @@ def download_image(url, filename, folder='images'):
     filepath = os.path.join(folder, filename)
     with open(filepath, 'wb') as file:
         file.write(response.content)
+    return filepath
 
 
 def check_for_redirect(response):
     if response.history:
         raise requests.exceptions.HTTPError
-

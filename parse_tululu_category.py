@@ -47,7 +47,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Скрипт предназначен для скачивания книг')
     parser.add_argument('--start_page', help='Страница начала скачивания книг', default=1, type=int)
-    parser.add_argument('--end_page', help='Страница конца скачивания книг', default=4, type=int)
+    parser.add_argument('--end_page', help='Страница конца скачивания книг', default=701, type=int)
     args = parser.parse_args()
 
     links = []

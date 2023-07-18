@@ -10,12 +10,13 @@ from pathvalidate import sanitize_filename
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
 
-    title_and_author = soup.find('table', class_='tabs').find('div', id='content').find('h1')
+    title_and_author = soup.select_one('.tabs #content h1')
     separator = title_and_author.text.find('::')
     title = title_and_author.text[:separator].strip()
     author = title_and_author.text[separator + len('::'):].strip()
 
-    picture = soup.find('body').find('div', class_='bookimage').find('img').get('src')
+    picture = soup.select_one('body .bookimage img')['src']
+
     picture_url = urljoin(response.url, picture)
 
     picture_link = urlsplit(picture_url)
@@ -23,24 +24,21 @@ def parse_book_page(response):
     picture_name_start = picture_path[1:].find('/')
     picture_name = picture_path[picture_name_start + 2:]
 
-    links = soup.find('div', id='content').find('table').find_all('a')
-    for link in links:
-        if link.get('href')[:4] == '/txt':
-            book_url = urljoin(response.url, link.get('href'))
-            break
-        else:
-            book_url = None
+    try:
+        book_url = urljoin(response.url, soup.select_one('#content table a[href^="/txt"]')['href'])
+    except TypeError:
+        book_url = None
 
-    text = soup.find('td', class_='ow_px_td').find_all('table', class_='d_book')[1].text
+    text = soup.select_one('.ow_px_td .d_book:last-of-type td').text
 
     comments = []
-    for comment in soup.find('td', class_='ow_px_td').find_all('div', class_='texts'):
+    for comment in soup.select('.ow_px_td .texts'):
         author_and_comment = comment.getText()
         start_comment = author_and_comment.find(')')
         commentary = author_and_comment[start_comment + len(')'):]
         comments.append(commentary)
 
-    genres = [genre.getText() for genre in soup.find('span', class_='d_book').find_all('a')]
+    genres = [genre.getText() for genre in soup.select('.ow_px_td span.d_book a')]
 
     book = {
         'title': title,

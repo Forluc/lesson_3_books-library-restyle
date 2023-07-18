@@ -17,10 +17,8 @@ def get_books_links(page_number):
 
     soup = BeautifulSoup(response.text, 'lxml')
 
-    links = soup.find('body').find_all('table', class_='d_book')
-    books_urls = []
-    for link in links:
-        books_urls.append(urljoin(url, link.find('a')['href']))
+    links = soup.select('body .d_book')
+    books_urls = [urljoin(url, link.select_one('a')['href']) for link in links]
     return books_urls
 
 

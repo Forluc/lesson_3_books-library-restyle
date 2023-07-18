@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import time
 from urllib.parse import urljoin, urlsplit
 
@@ -22,15 +23,15 @@ def get_books_links(page_number):
     return books_urls
 
 
-def get_book(url):
+def get_book_with_description(url, dest_folder, skip_imgs, skip_txt):
     response = requests.get(url, allow_redirects=True)
     response.raise_for_status()
     check_for_redirect(response)
 
     book = parse_book_page(response)
 
-    img_src = download_image(book['picture_url'], book['picture_name'])
-    book_path = download_txt(book['book_url'], book['title'])
+    img_src = None if skip_imgs else download_image(book['picture_url'], book['picture_name'], dest_folder)
+    book_path = None if skip_txt else download_txt(book['book_url'], book['title'], dest_folder)
 
     book_description = {
         'title': book['title'],
@@ -46,9 +47,16 @@ def get_book(url):
 def main():
     parser = argparse.ArgumentParser(
         description='Скрипт предназначен для скачивания книг')
-    parser.add_argument('--start_page', help='Страница начала скачивания книг', default=1, type=int)
+    parser.add_argument('--start_page', help='Страница начала скачивания книг', default=700, type=int)
     parser.add_argument('--end_page', help='Страница конца скачивания книг', default=701, type=int)
+    parser.add_argument('--dest_folder', help='Путь к каталогу с результатами парсинга: картинкам, книгам, JSON',
+                        default='files')
+    parser.add_argument('--skip_imgs', help='Не скачивать картинки', action=argparse.BooleanOptionalAction,
+                        default=False)
+    parser.add_argument('--skip_txt', help='Не скачивать книги', action=argparse.BooleanOptionalAction, default=False)
     args = parser.parse_args()
+
+    os.makedirs(args.dest_folder, exist_ok=True)
 
     links = []
     for page_number in range(args.start_page, args.end_page + 1):
@@ -62,7 +70,7 @@ def main():
     for link in links:
         book_number = urlsplit(link).path[2:-1]
         try:
-            books_descriptions.append(get_book(link))
+            books_descriptions.append(get_book_with_description(link, args.dest_folder, args.skip_imgs, args.skip_txt))
             print(f'Книга номер {book_number} скачана')
             counter += 1
         except (TypeError, requests.exceptions.MissingSchema) as error:
@@ -76,7 +84,7 @@ def main():
             counter += 1
         print()
 
-    with open('books_descriptions.json', 'w', encoding='utf-8') as file:
+    with open(os.path.join(args.dest_folder, 'books_descriptions.json'), 'w', encoding='utf-8') as file:
         json.dump(books_descriptions, file, ensure_ascii=False)
 
 

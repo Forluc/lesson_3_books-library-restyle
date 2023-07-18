@@ -53,25 +53,25 @@ def parse_book_page(response):
     return book
 
 
-def download_txt(url, filename, folder='books'):
+def download_txt(url, filename, dest_folder, folder='books'):
     response = requests.get(url, allow_redirects=True)
     response.raise_for_status()
     check_for_redirect(response)
 
-    os.makedirs(folder, exist_ok=True)
-    filepath = os.path.join(folder, f'{sanitize_filename(filename)}.txt')
+    os.makedirs(os.path.join(dest_folder, folder), exist_ok=True)
+    filepath = os.path.join(dest_folder, folder, f'{sanitize_filename(filename)}.txt')
     with open(filepath, 'wb') as file:
         file.write(response.content)
     return filepath
 
 
-def download_image(url, filename, folder='images'):
+def download_image(url, filename, dest_folder, folder='images'):
     response = requests.get(url, allow_redirects=True)
     response.raise_for_status()
     check_for_redirect(response)
 
-    os.makedirs(folder, exist_ok=True)
-    filepath = os.path.join(folder, filename)
+    os.makedirs(os.path.join(dest_folder, folder), exist_ok=True)
+    filepath = os.path.join(dest_folder, folder, filename)
     with open(filepath, 'wb') as file:
         file.write(response.content)
     return filepath

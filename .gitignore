@@ -1,6 +1,5 @@
 # Books data
-images/
-books/
+files/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

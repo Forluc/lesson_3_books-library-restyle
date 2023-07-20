@@ -58,19 +58,29 @@ def main():
 
     os.makedirs(args.dest_folder, exist_ok=True)
 
+    counter = 0
+    page_count = args.end_page - args.start_page
     links = []
-    for page_number in range(args.start_page, args.end_page + 1):
-        try:
-            links.extend(get_books_links(page_number))
-        except requests.exceptions.HTTPError:
-            print(f'ERROR: На странице номер {page_number} произошел редирект')
 
+    while page_count >= counter:
+        try:
+            links.extend(get_books_links(args.start_page + counter))
+            counter += 1
+        except requests.exceptions.HTTPError:
+            print(f'ERROR: На странице номер {args.start_page + counter} произошел редирект')
+            counter += 1
+        except requests.exceptions.ConnectionError as error:
+            print(error)
+            time.sleep(5)
+
+    books_count = len(links)
     counter = 0
     books_descriptions = []
-    for link in links:
-        book_number = urlsplit(link).path[2:-1]
+    while books_count > counter:
+        book_number = urlsplit(links[counter]).path[2:-1]
         try:
-            books_descriptions.append(get_book_with_description(link, args.dest_folder, args.skip_imgs, args.skip_txt))
+            books_descriptions.append(
+                get_book_with_description(links[counter], args.dest_folder, args.skip_imgs, args.skip_txt))
             print(f'Книга номер {book_number} скачана')
             counter += 1
         except (TypeError, requests.exceptions.MissingSchema) as error:

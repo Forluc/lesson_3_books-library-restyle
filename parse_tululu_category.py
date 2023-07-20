@@ -51,9 +51,9 @@ def main():
     parser.add_argument('--end_page', help='Страница конца скачивания книг', default=701, type=int)
     parser.add_argument('--dest_folder', help='Путь к каталогу с результатами парсинга: картинкам, книгам, JSON',
                         default='files')
-    parser.add_argument('--skip_imgs', help='Не скачивать картинки', action=argparse.BooleanOptionalAction,
+    parser.add_argument('--skip_imgs', help='Не скачивать картинки', action='store_true',
                         default=False)
-    parser.add_argument('--skip_txt', help='Не скачивать книги', action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument('--skip_txt', help='Не скачивать книги', action='store_true', default=False)
     args = parser.parse_args()
 
     os.makedirs(args.dest_folder, exist_ok=True)

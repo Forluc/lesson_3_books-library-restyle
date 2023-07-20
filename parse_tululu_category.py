@@ -30,17 +30,20 @@ def get_book_with_description(url, dest_folder, skip_imgs, skip_txt):
 
     book = parse_book_page(response)
 
-    img_src = None if skip_imgs else download_image(book['picture_url'], book['picture_name'], dest_folder)
-    book_path = None if skip_txt else download_txt(book['book_url'], book['title'], dest_folder)
-
     book_description = {
         'title': book['title'],
         'author': book['author'],
-        'img_src': img_src,
-        'book_path': book_path,
+        'img_src': None,
+        'book_path': None,
         'comments': book['comments'],
         'genres': book['genres'],
     }
+
+    if not skip_imgs:
+        book_description['img_src'] = download_image(book['picture_url'], book['picture_name'], dest_folder)
+    if not skip_txt:
+        book_description['book_path'] = download_txt(book['book_url'], book['title'], dest_folder)
+
     return book_description
 
 
